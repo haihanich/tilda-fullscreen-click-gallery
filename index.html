@@ -1,11 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tilda Fullscreen Click Gallery</title>
 </head>
+
 <body>
-    
+    <style>
+        .stage {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background: #111;
+        }
+
+        .photo {
+            width: min(720px, 92vw);
+            height: auto;
+            max-height: 92vh;
+            object-fit: contain;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .click-layer {
+            position: fixed;
+            inset: 0;
+            background: transparent;
+            cursor: pointer;
+            z-index: 9999;
+        }
+    </style>
+
+    <div class="stage" id="stage">
+        <img id="photo" class="photo" src="img/1.jpg" alt="">
+        <div class="click-layer" id="clickLayer" aria-label="Next image"></div>
+    </div>
+
+    <script>
+
+        const images = [
+            "img/1.jpg",
+            "img/2.jpg",
+            "img/3.jpg",
+        ];
+
+        const imgEl = document.getElementById("photo");
+        const clickLayer = document.getElementById("clickLayer");
+
+        let index = 0;
+
+        for (const src of images) {
+            const i = new Image();
+            i.src = src;
+        }
+
+        function show(i) {
+            index = (i + images.length) % images.length;
+            imgEl.src = images[index];
+        }
+
+        clickLayer.addEventListener("click", () => {
+            show(index + 1);
+        });
+
+        clickLayer.addEventListener("click", (e) => {
+            if (e.shiftKey) show(index - 1);
+        }, { capture: true });
+
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight") show(index + 1);
+            if (e.key === "ArrowLeft") show(index - 1);
+        });
+
+        show(0);
+    </script>
+
 </body>
+
 </html>
